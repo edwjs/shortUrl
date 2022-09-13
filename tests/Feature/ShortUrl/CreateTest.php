@@ -3,6 +3,7 @@
 namespace Tests\Feature\ShortUrl;
 
 use App\Facades\Actions\CodeGenerator;
+use App\Models\ShortUrl;
 use Tests\TestCase;
 use Illuminate\Support\Str;
 
@@ -45,6 +46,25 @@ class CreateTest extends TestCase
             ->assertJsonValidationErrors([                
                 'url' => __('validation.url', ['attribute' => 'url']),                
             ]);
+    }
+    
+    /** @test */
+    public function test_if_should_return_the_existed_code_if_the_url_is_the_same()
+    {
+        ShortUrl::factory()->create([
+            'url' => 'https://www.google.com.br',
+            'short_url' => config('app.url') . '/123456',
+            'code' => '123456'
+        ]);
+
+        $this->postJson(
+            route('api.short-urls.store'), 
+            ['url' => 'https://www.google.com.br'])        
+        ->assertJson([            
+            'short_url' => config('app.url') . '/123456',
+        ]);
+
+        $this->assertDatabaseCount('short_urls', 1);
     }
     
     

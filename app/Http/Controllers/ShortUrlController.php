@@ -17,11 +17,13 @@ class ShortUrlController extends Controller
         
         $code = CodeGenerator::run();
 
-        $shortUrl = ShortUrl::query()->create([
-            'url' => request('url'),
-            'short_url' => config('app.url') . '/' . $code,
-            'code' => $code,
-        ]);
+        $shortUrl = ShortUrl::query()->firstOrCreate(
+            [ 'url' => request('url') ],
+            [
+                'short_url' => config('app.url') . '/' . $code,
+                'code' => $code,
+            ]
+        );
 
         return response()->json([
             'short_url' => $shortUrl->short_url
