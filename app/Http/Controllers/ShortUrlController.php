@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\Actions\CodeGenerator;
 use App\Models\ShortUrl;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,11 +12,12 @@ class ShortUrlController extends Controller
     public function store()
     {
         $url = request('url');
+        $code = CodeGenerator::run();
 
         $shortUrl = ShortUrl::query()->create([
             'url' => $url,
-            'short_url' => config('app.url') . '/YH12',
-            'code' => 'YH12'
+            'short_url' => config('app.url') . '/' . $code,
+            'code' => $code,
         ]);
 
         return response()->json([
