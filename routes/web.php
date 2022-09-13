@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ShortUrl;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+
+    // if (request()->isJson()) {
+    //     return response()->json(['message' => 'Welcome to the Laravel Web API']);
+    // }
+
+    // return view('welcome');
+    return ['Laravel' => app()->version()];
+});
+
+Route::get('{shortUrl:code}', function(ShortUrl $shortUrl) {
+    $shortUrl->visits()->create([
+        'ip_address' => request()->ip(),
+        'user_agent' => request()->userAgent(),
+    ]);
+
     return ['Laravel' => app()->version()];
 });
 
