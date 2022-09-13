@@ -66,6 +66,4 @@ class CreateTest extends TestCase
 
         $this->assertDatabaseCount('short_urls', 1);
     }
-    
-    
 }
