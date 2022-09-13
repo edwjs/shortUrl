@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+
+    // if (request()->isJson()) {
+    //     return response()->json(['message' => 'Welcome to the Laravel Web API']);
+    // }
+
+    // return view('welcome');
     return ['Laravel' => app()->version()];
 });
 
