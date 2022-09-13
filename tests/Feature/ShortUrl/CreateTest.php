@@ -34,5 +34,18 @@ class CreateTest extends TestCase
             'code' => $randomCode,
         ]);
     }
+
+    /** @test */
+    public function test_url_should_be_valid_url()
+    {
+        $this->postJson(
+            route('api.short-urls.store'), 
+            ['url' => 'not-valid-url'])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors([                
+                'url' => __('validation.url', ['attribute' => 'url']),                
+            ]);
+    }
+    
     
 }
