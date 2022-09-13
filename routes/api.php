@@ -27,4 +27,5 @@ Route::delete('/short-urls/{shortUrl:code}', [ShortUrlController::class, 'destro
 
 #region Statistics
 Route::get('short-urls/{shortUrl:code}/stats/last-visit', [StatsController::class, 'lastVisit'])->name('api.short-urls.stats.last-visit');
+Route::get('short-urls/{shortUrl:code}/stats/visits', [StatsController::class, 'visits'])->name('api.short-urls.stats.visits');
 #endregion

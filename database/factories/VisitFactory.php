@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ShortUrl;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,9 @@ class VisitFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'ip_address' => $this->faker->ipv4,
+            'user_agent' => $this->faker->userAgent,
+            'short_url_id' => ShortUrl::factory(),
         ];
     }
 }
