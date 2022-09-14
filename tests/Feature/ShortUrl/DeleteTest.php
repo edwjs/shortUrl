@@ -10,10 +10,13 @@ use Tests\TestCase;
 
 class DeleteTest extends TestCase
 {
-    /** @test */
-    public function it_can_delete_a_short_url()
+    /**
+     * @dataProvider urls 
+     * @test
+     * */
+    public function it_can_delete_a_short_url($url)
     {
-        $shortUlr = ShortUrl::factory()->create();
+        $shortUlr = ShortUrl::factory()->create(['code' => $url]);
         
         $this->deleteJson(route('api.short-urls.destroy', $shortUlr->code))
             ->assertStatus(Response::HTTP_NO_CONTENT);
@@ -22,5 +25,13 @@ class DeleteTest extends TestCase
             'id' => $shortUlr->id,
         ]);
     }
-    
+
+    // dataset/dataprovider in phpunit
+    public function urls(): array
+    {
+        return [
+            'with abcd' => ['abcd'],
+            'with efgh' => ['efgh'],
+        ];
+    }    
 }
