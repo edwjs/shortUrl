@@ -33,7 +33,7 @@ it('has example page', function () {
 
 it('should be able to delete a short url', function () {
     $shortUlr = ShortUrl::factory()->create();    
-    $route = route('api.short-urls.destroy', $shortUlr->code);
+    $route = route('api.short-url.destroy', $shortUlr->code);
 
     expect($this->randomCode)->toBeString();
     ds($this->randomCode . ':: second test');
@@ -48,7 +48,7 @@ it('should be able to delete a short url', function () {
 
 // Using dataset
 it('should return a no-content status when deleting a short url', function($shortUlr) {    
-    deleteJson(route('api.short-urls.destroy', $shortUlr->code))
+    deleteJson(route('api.short-url.destroy', $shortUlr->code))
         ->assertStatus(Response::HTTP_NO_CONTENT);
 })->with([
     'with abcd' => fn () => ShortUrl::factory()->create(['code' => 'abcd']),

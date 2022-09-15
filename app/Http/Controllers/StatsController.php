@@ -16,7 +16,9 @@ class StatsController extends Controller
     }
 
     public function visits(ShortUrl $shortUrl)
-    {        
+    {    
+        // Does not work in SQLite
+
         $visits = $shortUrl->visits()
                     ->selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d') as date, COUNT(*) as count")
                     ->groupByRaw("DATE_FORMAT(created_at, '%Y-%m-%d')")

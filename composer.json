@@ -51,9 +51,7 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-        "runpest": [
-            "./vendor/bin/pest"
-        ]
+        "pestify": "./vendor/bin/pest tests/Feature/Pest/"
     },
     "extra": {
         "laravel": {

@@ -3,6 +3,7 @@
 namespace Tests\Feature\ShortUrl;
 
 use App\Facades\Actions\CodeGenerator;
+use App\Facades\Actions\UrlCode;
 use App\Models\ShortUrl;
 use Tests\TestCase;
 use Illuminate\Support\Str;
@@ -19,10 +20,10 @@ class CreateTest extends TestCase
         // $this->withoutExceptionHandling();
 
         $randomCode = Str::random(5);
-        CodeGenerator::shouldReceive('run')->once()->andReturn($randomCode);
+        UrlCode::shouldReceive('generate')->once()->andReturn($randomCode);
 
         $this->postJson(
-            route('api.short-urls.store'), 
+            route('api.short-url.store'), 
             ['url' => 'https://www.google.com.br'])
         ->assertStatus(Response::HTTP_CREATED)
         ->assertJson([            
@@ -40,7 +41,7 @@ class CreateTest extends TestCase
     public function test_url_should_be_valid_url()
     {
         $this->postJson(
-            route('api.short-urls.store'), 
+            route('api.short-url.store'), 
             ['url' => 'not-valid-url'])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors([                
@@ -58,7 +59,7 @@ class CreateTest extends TestCase
         ]);
 
         $this->postJson(
-            route('api.short-urls.store'), 
+            route('api.short-url.store'), 
             ['url' => 'https://www.google.com.br'])        
         ->assertJson([            
             'short_url' => config('app.url') . '/123456',

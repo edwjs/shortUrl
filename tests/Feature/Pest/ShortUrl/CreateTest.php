@@ -1,54 +1,66 @@
 <?php
 
-use Illuminate\Support\Str;
-use App\Facades\Actions\CodeGenerator;
+use App\Facades\Actions\UrlCode;
 use App\Models\ShortUrl;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Str;
 
-use function Pest\Laravel\postJson;
-
-it('should be able to create a short url', function () {
+it('successfully creates a short url', function () {
     $randomCode = Str::random(5);
-    CodeGenerator::shouldReceive('run')->once()->andReturn($randomCode);
-    
-    expect(postJson(
-        route('api.short-urls.store'), 
-        ['url' => 'https://www.google.com.br']))
-    ->assertStatus(Response::HTTP_CREATED)
-    ->assertJson([            
-        'short_url' => config('app.url') . '/' . $randomCode,
-    ]);
 
-    $this->assertDatabaseHas('short_urls', [
-        'url' => 'https://www.google.com.br',
-        'short_url' => config('app.url') . '/' . $randomCode,
-        'code' => $randomCode,
-    ]);
+    UrlCode::shouldReceive('generate')
+        ->once()
+        ->andReturn($randomCode);
+
+    $testUrl = config('app.url') . '/' . $randomCode;
+
+    $response = storeShortUrl(['url' => 'https://www.google.com']);
+
+    expect($response)
+        ->status()->toBeCreated()
+        ->content()
+        ->json()
+        ->toMatchArray(['short_url' => $testUrl]);
+
+    expect(ShortUrl::count())->toBe(1);
+
+    expect(ShortUrl::first())
+        ->url->ToBe('https://www.google.com')
+        ->code->toBe($randomCode)
+        ->short_url->toBe($testUrl);
 });
 
-test('url should be valid url', function () {
-    expect(postJson(
-        route('api.short-urls.store'), 
-        ['url' => 'not-valid-url']))
-        ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-        ->assertJsonValidationErrors([                
-            'url' => __('validation.url', ['attribute' => 'url']),                
+it('rejects an invalid URL', function () {
+    $response = storeShortUrl(['url' => 'not-valid-url']);
+
+    expect($response)
+        ->status()->toBeUnprocessableEntity()
+        ->content()
+        ->json()
+        ->toMatchArray([
+            "message" => "The url must be a valid URL.",
+            "errors"  => [
+                "url" => ["The url must be a valid URL."]
+            ]
         ]);
 });
 
-it('should return the existed code if the url is the same', function () {
-    ShortUrl::factory()->create([
-        'url' => 'https://www.google.com.br',
-        'short_url' => config('app.url') . '/123456',
-        'code' => '123456'
+it('returns the existing code when the URL already exists', function () {
+    $code = '123456';
+    $shortUrl = config('app.url') . '/' . $code;
+
+    shortUrl()->create([
+        'url'       => 'https://www.google.com',
+        'short_url' => $shortUrl,
+        'code'      => $code
     ]);
 
-    expect(postJson(
-        route('api.short-urls.store'), 
-        ['url' => 'https://www.google.com.br']))
-    ->assertJson([            
-        'short_url' => config('app.url') . '/123456',
-    ]);
+    $response = storeShortUrl(['url' => 'https://www.google.com']);
 
-    $this->assertDatabaseCount('short_urls', 1);
+    expect($response)
+        ->status()->toBeCreated()
+        ->content()
+        ->json()
+        ->toMatchArray(['short_url' => $shortUrl]);
+
+    expect(ShortUrl::count())->toBe(1);
 });
