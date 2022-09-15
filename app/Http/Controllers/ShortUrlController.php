@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Facades\Actions\CodeGenerator;
+use App\Facades\Actions\UrlCode;
 use App\Models\ShortUrl;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,7 @@ class ShortUrlController extends Controller
             'url' => 'required|url'
         ]);
         
-        $code = CodeGenerator::run();
+        $code = UrlCode::generate();
 
         $shortUrl = ShortUrl::query()->firstOrCreate(
             [ 'url' => request('url') ],

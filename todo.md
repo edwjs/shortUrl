@@ -1,5 +1,11 @@
 # API TDD
 
+## Desafio
+
+- [ ] Garantir que o código da url curta não se repita
+
+-- --
+
 - [X] Salvar um endpoint
     - [X] Precisar enviar o endpoint que queremos encurtar
     - [X] Endpoint tem que ser válido
